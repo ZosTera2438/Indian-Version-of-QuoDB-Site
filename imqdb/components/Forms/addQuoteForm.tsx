@@ -67,7 +67,7 @@ const AddQuoteForm = () => {
                     </div>
                     <form onSubmit={handleSubmit}>
                         {formEntries.map((entry, index) => (
-                            <div key={entry.id} className="grid grid-cols-4 items-center h-16 gap-2">
+                            <div key={entry.id} className="grid grid-cols-5 items-center h-16 gap-2">
                                 <div>
                                     <Input
                                         type="text"

@@ -43,7 +43,7 @@ export default function Login() {
         // toast.error(response?.error);
         setLoading(false)
       } else {
-        router.push("/dashboard")
+        router.push("/admin/dashboard")
       }
     }
   });
