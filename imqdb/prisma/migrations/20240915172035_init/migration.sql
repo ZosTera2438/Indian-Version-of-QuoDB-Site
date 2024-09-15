@@ -2,14 +2,23 @@
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'MEMBER');
 
 -- CreateEnum
-CREATE TYPE "Language" AS ENUM ('English', 'Hindi', 'Tamil', 'Telegu');
+CREATE TYPE "Language" AS ENUM ('English', 'Hindi', 'Tamil', 'Telegu', 'Bengali');
 
 -- CreateEnum
 CREATE TYPE "Status" AS ENUM ('REVIEW', 'APPROVED', 'REJECTED');
 
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "name" STRING;
-ALTER TABLE "User" ADD COLUMN     "role" "Role" NOT NULL DEFAULT 'MEMBER';
+-- CreateTable
+CREATE TABLE "User" (
+    "id" STRING NOT NULL,
+    "name" STRING,
+    "email" STRING NOT NULL,
+    "password" STRING NOT NULL,
+    "role" "Role" NOT NULL DEFAULT 'MEMBER',
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Contributions" (
@@ -30,6 +39,7 @@ CREATE TABLE "Quotes" (
     "movie" STRING NOT NULL,
     "quote" STRING NOT NULL,
     "status" "Status" NOT NULL,
+    "timestamps" STRING,
     "language" "Language" NOT NULL,
     "year" STRING NOT NULL,
     "userId" STRING,
