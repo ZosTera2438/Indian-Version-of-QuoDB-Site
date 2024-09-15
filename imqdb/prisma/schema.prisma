@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String
+  password  String
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Language {
+  English
+  Hindi
+  Tamil
+  Telegu
+  Bengali
+}
+
+enum Status {
+  REVIEW
+  APPROVED
+  REJECTED
+}
+
+model Contributions {
+  id        String   @id @default(uuid())
+  quoteId   String
+  name      String
+  email     String
+  message   String
+  quotes    Quotes[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Quotes {
+  id              String         @id @default(uuid())
+  movie           String
+  quote           String
+  status          Status
+  timestamps      String?
+  language        Language
+  year            String
+  userId          String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  Contributions   Contributions? @relation(fields: [contributionsId], references: [id])
+  contributionsId String?
+}

@@ -1,0 +1,7 @@
+cluster.name: "es-docker-cluster"
+network.host: 0.0.0.0
+http.port: 9200
+node.name: "es01"
+discovery.type: "single-node"
+xpack.security.enabled: false
+action.destructive_requires_name: true

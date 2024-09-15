@@ -1,0 +1,132 @@
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    command:
+      [
+        "./wait-for-es.sh",
+        "http://elasticsearch:9200",
+        "poetry",
+        "run",
+        "python",
+        "main.py",
+      ]
+    depends_on:
+      - elasticsearch
+      - redis
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    networks:
+      - imqdb
+    volumes:
+      - /tmp:/tmp  # Ensure no unnecessary data is stored
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    container_name: elasticsearch
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.license.self_generated.type=basic
+      - http.max_initial_line_length=100kb
+      - http.max_header_size=100kb
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - imqdb
+    logging:
+      driver: "none"  # Disable logging to save space
+
+  redis:
+    container_name: redis
+    image: redis:7-alpine  # Using alpine version for reduced size
+    networks:
+      - imqdb
+    logging:
+      driver: "none"  # Disable logging to save space
+
+  celery_worker:
+    container_name: celery_worker_imqdb
+    build: .
+    command:
+      - "poetry"
+      - "run"
+      - "celery"
+      - "-A"
+      - "app.core.workers.celery_worker.celery_app"
+      - "worker"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    volumes:
+      - .:/app:rw  # Set as read-write to minimize unnecessary writes
+    depends_on:
+      - api
+      - redis
+      - elasticsearch
+    networks:
+      - imqdb
+    logging:
+      driver: "json-file"  # Consider enabling logging for troubleshooting
+      options:
+        max-size: "200m"
+        max-file: "10"
+
+
+  flower:
+    container_name: flower
+    build: .
+    command:
+      [
+        "poetry",
+        "run",
+        "celery",
+        "-A",
+        "app.core.workers.celery_worker.celery_app",
+        "flower",
+        "--port=5555",
+      ]
+    ports:
+      - 5556:5555
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - api
+      - redis
+      - celery_worker
+    networks:
+      - imqdb
+    logging:
+      driver: "none"  
+
+networks:
+  imqdb:
+    external: true
+
+volumes:
+  esdata1:
+    driver: local
