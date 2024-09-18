@@ -20,7 +20,7 @@ export const ContributionsTable = ({ data }: any) => {
         <>
             <div className="flex items-start justify-between">
                 <Heading
-                    title={`Contributions (${data.length})`}
+                    title={`Contributions `}
                     description="Accept or Decline Contributions"
                 />
             </div>

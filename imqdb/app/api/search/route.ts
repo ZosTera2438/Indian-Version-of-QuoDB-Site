@@ -13,20 +13,38 @@ export const POST = async (
         const quotesData = response.data;
         const quotesfinal = await Promise.all(
             quotesData.map(async (quote: any) => {
-                const data = await prisma.quotes.findFirst({
-                    where: {
-                        id: quote._source.ID,
-                        language: req.language
-                    },
-                    select: {
-                        id: true,
-                        movie: true,
-                        year: true,
-                        quote: true,
-                        timestamps: true,
-                        language: true
-                    }
-                });
+                let data;
+                if (req.language === "Auto") {
+                    data = await prisma.quotes.findFirst({
+                        where: {
+                            id: quote._source.ID,
+                        },
+                        select: {
+                            id: true,
+                            movie: true,
+                            year: true,
+                            quote: true,
+                            timestamps: true,
+                            language: true
+                        }
+                    });
+                } else {
+                    data = await prisma.quotes.findFirst({
+                        where: {
+                            id: quote._source.ID,
+                            language: req.language
+                        },
+                        select: {
+                            id: true,
+                            movie: true,
+                            year: true,
+                            quote: true,
+                            timestamps: true,
+                            language: true
+                        }
+                    });
+                }
+
 
                 if (data) {
                     return data;

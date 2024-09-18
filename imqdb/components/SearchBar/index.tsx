@@ -17,6 +17,7 @@ export default function SearchBar({ query, setQuery, onSubmit, language, setLang
           onChange={handleLanguageChange}
           className="font-bold hidden md:block rounded-full w-24 py-2 pl-4 text-gray-700 bg-gray-100 leading-tight focus:outline-none focus:shadow-outline lg:text-sm text-xs mr-4"
         >
+          <option value="Auto">Auto</option>
           <option value="English">English</option>
           <option value="Bengali">Bengali</option>
           <option value="Tamil">Tamil</option>

@@ -7,7 +7,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 const Search = () => {
   const [query, setquery] = useState("");
-  const [language, setLanguage] = useState("English")
+  const [language, setLanguage] = useState("Auto")
   const router = useRouter()
 
   const onSearch = (e: any) => {
