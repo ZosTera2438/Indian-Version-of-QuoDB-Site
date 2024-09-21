@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/utils";
 import { QuotesTable } from "@/components/Tables/QuotesTable";
 import { columns } from "@/components/Tables/columns";
+import { QuoteTable } from "@/components/Tables/Table";
 
 export default function Dashboard() {
     const { data, error, isLoading } = useSWR('/api/quote', fetcher);
@@ -31,19 +32,10 @@ export default function Dashboard() {
 
     return (
         <PageContainer scrollable={true}>
-            <div className="grid grid-cols-1 gap-5">
+            <div className="flex flex-col gap-5 h-screen">
                 <Label className="text-4xl font-bold">All Quotes</Label>
                 {!isLoading && data ? (
-                    <QuotesTable
-                        searchKey="quotes"
-                        pageNo={page}
-                        columns={columns}
-                        totalUsers={totalQuotes}
-                        data={currentData}
-                        pageCount={pageCount}
-                        onPageChange={handlePageChange}
-                        onPageLimitChange={handlePageLimitChange}
-                    />
+                    <QuoteTable rowData={data.quotes}/>
                 ) : <>Loading...</>}
             </div>
         </PageContainer>

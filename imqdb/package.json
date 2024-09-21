@@ -12,6 +12,10 @@
     "docker:compose:dev": "docker-compose down && docker compose up -d --build"
   },
   "dependencies": {
+    "@ag-grid-community/client-side-row-model": "^32.2.0",
+    "@ag-grid-community/core": "^32.2.0",
+    "@ag-grid-community/react": "^32.2.0",
+    "@ag-grid-community/styles": "^32.2.0",
     "@auth/prisma-adapter": "^2.4.2",
     "@prisma/client": "^5.19.1",
     "@radix-ui/react-checkbox": "^1.1.1",
